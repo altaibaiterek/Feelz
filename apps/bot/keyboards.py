@@ -5,6 +5,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from apps.bot.utils import get_student_groups, get_group_lessons, get_or_create_attendance_by_lesson
+from apps.education.models import Task
 
 
 async def get_student_groups_list() -> InlineKeyboardMarkup:
@@ -87,11 +88,12 @@ async def get_lesson_menu(
 
     keyboard = InlineKeyboardBuilder()
     attendance = await get_or_create_attendance_by_lesson(lesson, student_group_id)
+    task, created = await Task.objects.aget_or_create(lesson=lesson)
 
     keyboard.add(
         InlineKeyboardButton(
-            text="!!!Проверка заданий!!!",
-            callback_data="sd",
+            text="Проверка заданий",
+            callback_data=f"task_{task.id}",
         )
     )
 
@@ -137,5 +139,33 @@ async def get_student_attendance_menu(
     )
 
     return keyboard.adjust(2).as_markup()
+
+
+async def get_student_task_menu(
+    student_task
+) -> InlineKeyboardMarkup:
+
+    keyboard = InlineKeyboardBuilder()
+    student_task_id = student_task.id
+
+    passed = 'Не сдал' if student_task.passed else 'Сдал'
+    mark = 'Не принято' if student_task.mark <= 0 else f'{student_task.mark} баллов'
+
+    keyboard.add(
+        InlineKeyboardButton(
+            text=passed,
+            callback_data=f"student_task_passed_status_{student_task_id}",
+        )
+    )
+
+    keyboard.add(
+        InlineKeyboardButton(
+            text=mark,
+            callback_data=f"student_task_mark_status_{student_task_id}",
+        )
+    )
+
+    return keyboard.adjust(2).as_markup()
+
 
 

@@ -7,11 +7,11 @@ from .models import StudentTask, StudentAttendance
 
 @admin.register(StudentTask)
 class StudentTaskAdmin(BaseAdmin):
-    list_display = ('student', 'task', 'body')
-    list_filter = ('student', 'task')
-    search_fields = ('student__first_name', 'student__last_name', 'task__body')
+    list_display = ('student', 'task', 'passed', 'mark')
+    list_filter = ('student', 'task', 'passed')
+    search_fields = ('student__first_name', 'student__last_name')
     ordering = ('student', 'task')
-    fields = ('student', 'task', 'body')
+    fields = ('student', 'task', 'passed', 'mark')
     list_per_page = 20
 
 

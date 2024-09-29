@@ -9,12 +9,12 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import CallbackQuery, Message
 
 from apps.account.models import Student
-from apps.attendance.models import StudentAttendance
-from apps.bot.keyboards import get_student_attendance_menu, get_student_groups_list, get_group_lessons_list, get_lesson_menu
+from apps.attendance.models import StudentAttendance, StudentTask
+from apps.bot.keyboards import get_student_attendance_menu, get_student_groups_list, get_group_lessons_list, get_lesson_menu, get_student_task_menu
 
-from apps.bot.utils import extract_student_info, get_info_answer, get_date_info, get_student_by_attendance, get_student_data_by_attendance, get_student_group_by_id, get_lesson_info_by_id, \
+from apps.bot.utils import extract_student_late_info, extract_student_mark_info, get_info_answer, get_date_info, get_student_by_attendance, get_student_data_by_attendance, get_student_data_by_task, get_student_group_by_id, get_lesson_info_by_id, \
     get_student_group_id_by_lesson, get_students_by_group_id, get_attendance_info_by_id, \
-    get_students_attendance_by_lesson_attendance, send_lesson_attendance
+    get_students_attendance_by_lesson_attendance, get_students_tasks_by_lesson_task, get_task_info_by_id, send_lesson_attendance, send_students_tasks
 
 
 main_router = Router(name="Main info/menu")
@@ -157,59 +157,124 @@ async def input_student_attendance_late_status(
     message: Message,
 ) -> None:
     
-    late_time = int(message.text)
+    input_value = int(message.text)
     previous_message = message.reply_to_message.text
-    student_data = await extract_student_info(previous_message)
 
-    student = await Student.objects.aget(phone=student_data['phone'])
-    student_attendance = await StudentAttendance.objects.aget(student=student)
+    student_data = await extract_student_late_info(previous_message)
+    
+    if student_data:
+        student = await Student.objects.aget(phone=student_data['phone'])
+        student_attendance = await StudentAttendance.objects.aget(student=student)
 
-    student_attendance.late = late_time
-    await student_attendance.asave()
+        student_attendance.late = input_value
+        await student_attendance.asave()
 
-    await message.answer(
-        f"""
-        Время опоздания {late_time} минут успешно записано для студента {student_data['first_name'] + ' ' + student_data['last_name']} ({student_data['phone']})
-        """
-        )
+        await message.answer(
+            f"""
+            Время опоздания {input_value} минут успешно записано для студента {student_data['first_name'] + ' ' + student_data['last_name']} ({student_data['phone']})
+            """
+            )
+    else:
+        student_data = await extract_student_mark_info(previous_message)
 
+        student = await Student.objects.aget(phone=student_data['phone'])
+        student_task = await StudentTask.objects.aget(student=student)
 
+        student_task.mark = input_value
+        await student_task.asave()
 
-
-    # print(previous_message.startswith('Укажите на сколько минут опоздал студент '))
-    # await message.answer(str(resss))
-    # match = re.search(r"<b><i>(.+?)\s+(\d{3}-\d{3}-\d{4})</i></b>", previous_message)
-
-    # if match:
-    #     student_name = match.group(1)
-    #     student_phone = match.group(2)
-
-    #     student_phone = student_phone
-
-    #     student = await Student.objects.aget(phone=student_phone)
-    #     student_attendance = await StudentAttendance.objects.aget(student=student)
-
-    #     student_attendance.late = late_time
-    #     await student_attendance.asave()
-
-    #     await message.answer(f"Время опоздания {late_time} минут успешно записано для студента {student_name} ({student_phone}).")
-    # else:
-    #     await message.answer("Ошибка: Не удалось найти информацию о студенте.")
+        await message.answer(
+            f"""
+            Оценка за задание {input_value} баллов успешно записано для студента {student_data['first_name'] + ' ' + student_data['last_name']} ({student_data['phone']})
+            """
+            )
 
 
-@education_router.callback_query(F.data.startswith("education_view#"))
-async def education_view(
+
+@education_router.callback_query(F.data.startswith("task_"))
+async def task_view(
         callback: CallbackQuery,
 ) -> None:
-    await callback.answer(
-        text='education_view'
+    task_id = callback.data.split("task_")[1]
+    task = await get_task_info_by_id(task_id)
+
+    students_tasks = await get_students_tasks_by_lesson_task(task)
+
+    await send_students_tasks(
+        update_type=callback,
+        students_tasks=students_tasks,
+        students_tasks_keyboard=get_student_task_menu
+                                 )
+
+
+@attendance_router.callback_query(F.data.startswith("student_task_passed_status_"))
+async def update_student_task_passed_status(
+    callback: CallbackQuery,
+) -> None:
+    
+    student_task_id = callback.data.split("student_task_passed_status_")[1]
+    student_task = await StudentTask.objects.aget(id=student_task_id)
+
+    student_task.passed = not student_task.passed
+
+    if student_task.passed:
+        await callback.answer("❌ Не сдал")
+        student_task.passed = True
+    else:
+        await callback.answer("✅ сдал")
+        student_task.passed = False
+
+    await student_task.asave()
+
+    updated_status = await get_student_task_menu(student_task=student_task)
+    
+    await callback.message.edit_reply_markup(
+        reply_markup=updated_status
     )
+
+
+@attendance_router.callback_query(F.data.startswith("student_task_mark_status_"))
+async def update_student_task_mark_status(
+    callback: CallbackQuery,
+) -> None:
+    
+    student_task_id = callback.data.split("student_task_mark_status_")[1]
+    student_task = await StudentTask.objects.aget(id=student_task_id)
+
+    student_data = await get_student_data_by_task(student_task)
+
+    student_name = (student_data['first_name'] + ' ' + student_data['last_name']).upper()
+    student_phone = student_data['phone']
+
+    menu_text = f"Укажите на сколько баллов получил студент {student_name} ({student_phone}):"
+    menu_answer_text = 'Запись оценки'
+
+    await callback.answer(menu_answer_text)
+    
     await callback.message.answer(
-        text='education_view'
-    )
+        text=menu_text,
+        parse_mode="HTML"
+        )
+    
 
+# @attendance_router.message(F.text.regexp(r"^\d+$"))
+# async def input_student_task_mark_status(
+#     message: Message,
+# ) -> None:
+    
+#     mark_points = int(message.text)
+#     previous_message = message.reply_to_message.text
+    
+    # student_data = await extract_student_mark_info(previous_message)
 
+    # student = await Student.objects.aget(phone=student_data['phone'])
+    # student_task = await StudentTask.objects.aget(student=student)
 
+    # student_task.mark = mark_points
+    # await student_task.asave()
 
-
-
+    # await message.answer(
+    #     f"""
+    #     Оценка за задание {mark_points} баллов успешно записано для студента {student_data['first_name'] + ' ' + student_data['last_name']} ({student_data['phone']})
+    #     """
+    #     )

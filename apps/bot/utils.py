@@ -7,8 +7,8 @@ from asgiref.sync import sync_to_async
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery, Message
 
 from apps.account.models import Student, StudentGroup
-from apps.attendance.models import StudentAttendance
-from apps.education.models import Lesson, Attendance
+from apps.attendance.models import StudentAttendance, StudentTask
+from apps.education.models import Lesson, Attendance, Task
 
 
 async def send_fake_message_update_by_callback(callback, text):
@@ -50,6 +50,24 @@ async def get_info_answer(
         await update_type.answer(
             text=text,
             reply_markup=keyboard,
+        )
+
+
+async def send_students_tasks(
+    update_type: CallbackQuery,
+    students_tasks: list,
+    students_tasks_keyboard
+) -> None:
+
+    await update_type.answer('Задания студентов')
+
+    for student_task in students_tasks:
+        student = await get_student_obj_by_student_task(student_task)
+        student_text = student.first_name
+
+        await update_type.message.answer(
+            text=student_text,
+            reply_markup=await students_tasks_keyboard(student_task)
         )
 
 
@@ -130,27 +148,59 @@ def get_or_create_student_attendance(
     return student_attendance[0]
 
 
+def get_or_create_student_task(
+    student,
+    task
+):
+    student_task = StudentTask.objects.get_or_create(
+            student=student,
+            task=task
+            )
+    return student_task[0]
+
+
 def get_or_create_students_attendance(attendance):
     group = attendance.student_group
     group_students = group.students.all()
     
     students_attendance = []
     for student in group_students:
-        # student_attendance = StudentAttendance.objects.get_or_create(
-        #     student=student,
-        #     attendance=attendance
-        #     )
-        # students_attendance.append(student_attendance[0])
-        students_attendance.append(get_or_create_student_attendance(student=student, attendance=attendance))
+        students_attendance.append(
+            get_or_create_student_attendance(
+                student=student, 
+                attendance=attendance
+                )
+            )
         
-
     return students_attendance
+
+
+def get_or_create_students_tasks(task):
+    group = task.lesson.student_group
+    group_students = group.students.all()
+    
+    students_tasks = []
+    for student in group_students:
+        students_tasks.append(
+            get_or_create_student_task(
+                student=student, 
+                task=task
+                )
+            )
+        
+    return students_tasks
 
 
 @sync_to_async
 def get_students_attendance_by_lesson_attendance(attendance):
     students_attendance = get_or_create_students_attendance(attendance)
     return list(students_attendance)
+
+
+@sync_to_async
+def get_students_tasks_by_lesson_task(lesson_task):
+    students_tasks = get_or_create_students_tasks(lesson_task)
+    return list(students_tasks)
 
 
 @sync_to_async
@@ -166,6 +216,11 @@ def get_lesson_info_by_id(lesson_id):
 @sync_to_async
 def get_attendance_info_by_id(attendance_id):
     return Attendance.objects.get(id=attendance_id)
+
+
+@sync_to_async
+def get_task_info_by_id(task_id):
+    return Task.objects.get(id=task_id)
 
 
 @sync_to_async
@@ -187,11 +242,22 @@ def get_student_by_attendance(student_attendance):
 
 
 @sync_to_async
+def get_student_obj_by_student_task(student_task):
+    # return Student.objects.get(attendance=student_attendance)
+    return student_task.student
+
+
+@sync_to_async
 def get_student_data_by_attendance(student_attendance):
     return student_attendance.student.to_dict_data()
 
 
-async def extract_student_info(message):
+@sync_to_async
+def get_student_data_by_task(student_task):
+    return student_task.student.to_dict_data()
+
+
+async def extract_student_late_info(message):
     pattern = r"Укажите на сколько минут опоздал студент (\w+)(?: (\w+))?(?: \(\+\d{12}\))?"
     match = re.search(pattern, message)
 
@@ -204,3 +270,19 @@ async def extract_student_info(message):
         return {"first_name": first_name, "last_name": last_name, "phone": phone}
     else:
         return None
+
+
+async def extract_student_mark_info(message):
+    pattern = r"Укажите на сколько баллов получил студент (\w+)(?: (\w+))?(?: \(\+\d{12}\))?"
+    match = re.search(pattern, message)
+
+    if match:
+        first_name = match.group(1)
+        last_name = match.group(2) if match.group(2) else ""
+        phone_pattern = r"(\(\+\d{12}\))"
+        phone_match = re.search(phone_pattern, message)
+        phone = phone_match.group(1).replace('(', '').replace(')', '') if phone_match else None
+        return {"first_name": first_name, "last_name": last_name, "phone": phone}
+    else:
+        return None
+    

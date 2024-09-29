@@ -26,11 +26,19 @@ class StudentTask(Base):
         verbose_name=_('Студент'),
         help_text=_('Студент, выполняющий задание')
     )
-    body = models.TextField(
+    passed = models.BooleanField(
         blank=True,
         null=True,
-        verbose_name=_('Ответ'),
-        help_text=_('Ответ студента на задание')
+        default=False,
+        verbose_name=_('Сдал'),
+        help_text=_('Студент сдал задание')
+    )
+    mark = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        verbose_name=_('Оценка'),
+        help_text=_('Оценка за задание')
     )
 
     def __str__(self):
