@@ -1,3 +1,4 @@
+import re
 import datetime
 from typing import Union
 
@@ -69,6 +70,30 @@ async def send_lesson_attendance(
             reply_markup=await students_attendance_keyboard(student_attendance)
         )
 
+
+async def send_attendance_late_menu(
+    update_type: CallbackQuery,
+    student_attendance,
+) -> None:
+
+    menu_text = 'Укажите на сколько опоздал студент'
+    menu_answer_text = 'Опоздание'
+
+    await update_type.answer(menu_answer_text)
+    
+    await update_type.message.answer(
+        text=menu_text,
+        )
+
+
+    # for student_attendance in students_attendance:
+    #     student = await get_student_by_attendance(student_attendance)
+    #     student_text = student.first_name
+
+    #     await update_type.message.answer(
+    #         text=student_text,
+    #         reply_markup=await students_attendance_keyboard(student_attendance)
+    #     )
 
 
 ################################################################################################################
@@ -161,3 +186,21 @@ def get_student_by_attendance(student_attendance):
     return student_attendance.student
 
 
+@sync_to_async
+def get_student_data_by_attendance(student_attendance):
+    return student_attendance.student.to_dict_data()
+
+
+async def extract_student_info(message):
+    pattern = r"Укажите на сколько минут опоздал студент (\w+)(?: (\w+))?(?: \(\+\d{12}\))?"
+    match = re.search(pattern, message)
+
+    if match:
+        first_name = match.group(1)
+        last_name = match.group(2) if match.group(2) else ""
+        phone_pattern = r"(\(\+\d{12}\))"
+        phone_match = re.search(phone_pattern, message)
+        phone = phone_match.group(1).replace('(', '').replace(')', '') if phone_match else None
+        return {"first_name": first_name, "last_name": last_name, "phone": phone}
+    else:
+        return None

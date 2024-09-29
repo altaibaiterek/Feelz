@@ -118,8 +118,9 @@ async def get_student_attendance_menu(
 
     keyboard = InlineKeyboardBuilder()
     student_attendance_id = student_attendance.id
+
     skipped = 'Не был' if student_attendance.skipped else 'Был'
-    late = student_attendance.late
+    late = 'Не опоздал' if student_attendance.late <= 0 else f'Опоздал на {student_attendance.late} минут'
 
     keyboard.add(
         InlineKeyboardButton(
@@ -130,8 +131,8 @@ async def get_student_attendance_menu(
 
     keyboard.add(
         InlineKeyboardButton(
-            text="Опоздал",
-            callback_data=f"student_attendance_status_",
+            text=late,
+            callback_data=f"student_attendance_late_status_{student_attendance_id}",
         )
     )
 

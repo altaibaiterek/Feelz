@@ -1,3 +1,9 @@
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
+
+from django.forms.models import model_to_dict
+
 from django.utils.translation import gettext_lazy as _
 
 from django.db import models
@@ -30,3 +36,6 @@ class Base(models.Model):
     class Meta:
         abstract = True
         ordering = ("-created_at",)
+
+    def to_dict_data(self):
+        return model_to_dict(self)
