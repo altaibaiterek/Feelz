@@ -1,7 +1,3 @@
-import json
-
-from django.core.serializers.json import DjangoJSONEncoder
-
 from django.forms.models import model_to_dict
 
 from django.utils.translation import gettext_lazy as _

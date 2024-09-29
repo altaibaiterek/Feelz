@@ -1,15 +1,19 @@
 import math
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from apps.bot.utils import get_student_groups, get_group_lessons, get_or_create_attendance_by_lesson
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 from apps.education.models import Task
+
+from apps.bot.utils import get_student_groups, get_group_lessons, get_or_create_attendance_by_lesson
+
+
+################################################################################################################
 
 
 async def get_student_groups_list() -> InlineKeyboardMarkup:
-
+    
     groups = await get_student_groups()
 
     group_buttons = [
@@ -55,7 +59,7 @@ async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
                 [
                     InlineKeyboardButton
                     (
-                        text="Назад",
+                        text="🔙 Назад",
                         callback_data='back_to_menu'
                     )
                 ]
@@ -72,13 +76,16 @@ async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
     lesson_rows.append(
         [
             InlineKeyboardButton(
-                text="Назад",
+                text="🔙 Назад",
                 callback_data='back_to_menu'
             )
         ]
     )
 
     return InlineKeyboardMarkup(inline_keyboard=lesson_rows)
+
+
+################################################################################################################
 
 
 async def get_lesson_menu(
@@ -92,26 +99,29 @@ async def get_lesson_menu(
 
     keyboard.add(
         InlineKeyboardButton(
-            text="Проверка заданий",
+            text="🔍 Проверка заданий",
             callback_data=f"task_{task.id}",
         )
     )
 
     keyboard.add(
         InlineKeyboardButton(
-            text="Посещаемость",
+            text="📈 Посещаемость",
             callback_data=f"attendance_{attendance.id}",
         )
     )
 
     keyboard.add(
         InlineKeyboardButton(
-            text="Назад",
+            text="🔙 Назад",
             callback_data=f"student_group_{student_group_id}",
         )
     )
 
     return keyboard.adjust(2).as_markup()
+
+
+################################################################################################################
 
 
 async def get_student_attendance_menu(
@@ -121,8 +131,8 @@ async def get_student_attendance_menu(
     keyboard = InlineKeyboardBuilder()
     student_attendance_id = student_attendance.id
 
-    skipped = 'Не был' if student_attendance.skipped else 'Был'
-    late = 'Не опоздал' if student_attendance.late <= 0 else f'Опоздал на {student_attendance.late} минут'
+    skipped = '❌ Не был' if student_attendance.skipped else '✅ Был'
+    late = '❌ Не опоздал' if student_attendance.late <= 0 else f'⚠️ Опоздал на {student_attendance.late} минут'
 
     keyboard.add(
         InlineKeyboardButton(
@@ -148,8 +158,8 @@ async def get_student_task_menu(
     keyboard = InlineKeyboardBuilder()
     student_task_id = student_task.id
 
-    passed = 'Не сдал' if student_task.passed else 'Сдал'
-    mark = 'Не принято' if student_task.mark <= 0 else f'{student_task.mark} баллов'
+    passed = '❌ Не сдал' if student_task.passed else '✅ Сдал'
+    mark = '❌ Не принято' if student_task.mark <= 0 else f'✅ {student_task.mark} баллов'
 
     keyboard.add(
         InlineKeyboardButton(
