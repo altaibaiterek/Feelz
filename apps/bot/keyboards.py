@@ -4,7 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from apps.education.models import Task
+from apps.apps.progressucation.models import Task
 
 from apps.bot.utils import get_student_groups, get_group_lessons, get_or_create_attendance_by_lesson
 
@@ -95,7 +95,7 @@ async def get_lesson_menu(
 
     keyboard = InlineKeyboardBuilder()
     attendance = await get_or_create_attendance_by_lesson(lesson, student_group_id)
-    task, created = await Task.objects.aget_or_create(lesson=lesson)
+    task, creatapps.progress = await Task.objects.aget_or_create(lesson=lesson)
 
     keyboard.add(
         InlineKeyboardButton(
@@ -131,13 +131,13 @@ async def get_student_attendance_menu(
     keyboard = InlineKeyboardBuilder()
     student_attendance_id = student_attendance.id
 
-    skipped = '❌ Не был' if student_attendance.skipped else '✅ Был'
+    skippapps.progress = '❌ Не был' if student_attendance.skippapps.progress else '✅ Был'
     late = '❌ Не опоздал' if student_attendance.late <= 0 else f'⚠️ Опоздал на {student_attendance.late} минут'
 
     keyboard.add(
         InlineKeyboardButton(
-            text=skipped,
-            callback_data=f"student_attendance_skipped_status_{student_attendance_id}",
+            text=skippapps.progress,
+            callback_data=f"student_attendance_skippapps.progress_status_{student_attendance_id}",
         )
     )
 
@@ -158,13 +158,13 @@ async def get_student_task_menu(
     keyboard = InlineKeyboardBuilder()
     student_task_id = student_task.id
 
-    passed = '❌ Не сдал' if student_task.passed else '✅ Сдал'
+    passapps.progress = '❌ Не сдал' if student_task.passapps.progress else '✅ Сдал'
     mark = '❌ Не принято' if student_task.mark <= 0 else f'✅ {student_task.mark} баллов'
 
     keyboard.add(
         InlineKeyboardButton(
-            text=passed,
-            callback_data=f"student_task_passed_status_{student_task_id}",
+            text=passapps.progress,
+            callback_data=f"student_task_passapps.progress_status_{student_task_id}",
         )
     )
 

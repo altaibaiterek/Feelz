@@ -7,11 +7,11 @@ from .models import Student, StudentGroup
 
 @admin.register(Student)
 class StudentAdmin(BaseAdmin):
-    list_display = ('first_name', 'last_name', 'phone', 'telegram_id', 'telegram_username')
+    list_display = ('first_name', 'last_name', 'phone_number')
     list_filter = ('last_name',)
-    search_fields = ('first_name', 'last_name', 'telegram_id', 'phone', 'telegram_username')
-    ordering = ('last_name', 'phone')
-    fields = ('first_name', 'last_name', 'phone', 'telegram_id', 'telegram_username')
+    search_fields = ('first_name', 'last_name', 'phone_number')
+    ordering = ('last_name', 'phone_number')
+    fields = ('first_name', 'last_name', 'phone_number')
     list_per_page = 20
 
 

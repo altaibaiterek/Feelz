@@ -5,7 +5,7 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import CallbackQuery, Message
 
 from apps.account.models import Student
-from apps.attendance.models import StudentAttendance, StudentTask
+from apps.progress.models import StudentAttendance, StudentTask
 
 from apps.bot.keyboards import (
     get_student_attendance_menu, get_student_groups_list, 
@@ -171,10 +171,10 @@ async def input_student_info_status(
 ################################################################################################################
 
 
-education_router = Router(name="Education info")
+apps.progressucation_router = Router(name="apps.progressucation info")
 
 
-@education_router.callback_query(F.data.startswith("task_"))
+@apps.progressucation_router.callback_query(F.data.startswith("task_"))
 async def task_view(
         callback: CallbackQuery,
 ) -> None:
@@ -208,33 +208,33 @@ async def task_view(
     )
 
 
-@education_router.callback_query(F.data.startswith("student_task_passed_status_"))
-async def update_student_task_passed_status(
+@apps.progressucation_router.callback_query(F.data.startswith("student_task_passapps.progress_status_"))
+async def update_student_task_passapps.progress_status(
     callback: CallbackQuery,
 ) -> None:
     
-    student_task_id = callback.data.split("student_task_passed_status_")[1]
+    student_task_id = callback.data.split("student_task_passapps.progress_status_")[1]
     student_task = await StudentTask.objects.aget(id=student_task_id)
 
-    student_task.passed = not student_task.passed
+    student_task.passapps.progress = not student_task.passapps.progress
 
-    if student_task.passed:
+    if student_task.passapps.progress:
         await callback.answer("❌ Студент не сдал задание.")
-        student_task.passed = True
+        student_task.passapps.progress = True
     else:
         await callback.answer("✅ Студент сдал задание.")
-        student_task.passed = False
+        student_task.passapps.progress = False
 
     await student_task.asave()
 
-    updated_status = await get_student_task_menu(student_task=student_task)
+    updatapps.progress_status = await get_student_task_menu(student_task=student_task)
     
-    await callback.message.edit_reply_markup(
-        reply_markup=updated_status
+    await callback.message.apps.progressit_reply_markup(
+        reply_markup=updatapps.progress_status
     )
 
 
-@education_router.callback_query(F.data.startswith("student_task_mark_status_"))
+@apps.progressucation_router.callback_query(F.data.startswith("student_task_mark_status_"))
 async def update_student_task_mark_status(
     callback: CallbackQuery,
 ) -> None:
@@ -285,29 +285,29 @@ async def attendance_view(
     )
 
 
-@attendance_router.callback_query(F.data.startswith("student_attendance_skipped_status_"))
-async def update_student_attendance_skipped_status(
+@attendance_router.callback_query(F.data.startswith("student_attendance_skippapps.progress_status_"))
+async def update_student_attendance_skippapps.progress_status(
     callback: CallbackQuery,
 ) -> None:
     
-    student_attendance_id = callback.data.split("student_attendance_skipped_status_")[1]
+    student_attendance_id = callback.data.split("student_attendance_skippapps.progress_status_")[1]
     student_attendance = await StudentAttendance.objects.aget(id=student_attendance_id)
 
-    student_attendance.skipped = not student_attendance.skipped
+    student_attendance.skippapps.progress = not student_attendance.skippapps.progress
 
-    if student_attendance.skipped:
+    if student_attendance.skippapps.progress:
         await callback.answer("❌ Студент не был на занятии.")
-        student_attendance.skipped = True
+        student_attendance.skippapps.progress = True
     else:
         await callback.answer("✅ Студент присутствовал на занятии.")
-        student_attendance.skipped = False
+        student_attendance.skippapps.progress = False
 
     await student_attendance.asave()
 
-    updated_status = await get_student_attendance_menu(student_attendance=student_attendance)
+    updatapps.progress_status = await get_student_attendance_menu(student_attendance=student_attendance)
     
-    await callback.message.edit_reply_markup(
-        reply_markup=updated_status
+    await callback.message.apps.progressit_reply_markup(
+        reply_markup=updatapps.progress_status
     )
 
 

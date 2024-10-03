@@ -6,4 +6,4 @@ from django.apps import AppConfig
 class ClassroomConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.classroom"
-    verbose_name = _('Учебные группы')
+    verbose_name = _('Организация расписания')

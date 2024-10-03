@@ -22,6 +22,7 @@ class DayOfWeek(Base):
         choices=DAYS_OF_WEEK, 
         primary_key=True,
         unique=True,
+        default=1,
         verbose_name=_('День'),
         help_text=_('День недели'),
         validators=[
@@ -42,8 +43,7 @@ class DayOfWeek(Base):
 class ClassRoom(Base):
     name = models.CharField(
         max_length=255, 
-        blank=True,
-        null=True,
+        unique=True,
         verbose_name=_("Название"),
         help_text=_('Название кабинета')
         )
@@ -66,16 +66,15 @@ class ClassRoom(Base):
 class ClassSchedule(Base):
     name = models.CharField(
         max_length=255, 
-        blank=True,
-        null=True,
+        unique=True,
         verbose_name=_("Название"),
-        help_text=_('Название учебного расписания (дни)')
+        help_text=_('Название расписания')
         )
     description = models.TextField(
         blank=True,
         null=True,
         verbose_name=_('Описание'),
-        help_text=_('Описание учебного расписания (дни)'),
+        help_text=_('Описание расписания'),
         ) 
     days = models.ManyToManyField(
         DayOfWeek,
@@ -97,16 +96,15 @@ class ClassSchedule(Base):
 class ClassTime(Base):
     name = models.CharField(
         max_length=255, 
-        blank=True,
-        null=True,
+        unique=True,
         verbose_name=_("Название"),
-        help_text=_('Название расписания времени занятий')
+        help_text=_('Название временного отрезка')
         )
     description = models.TextField(
         blank=True,
         null=True,
         verbose_name=_('Описание'),
-        help_text=_('Описание расписания времени занятий'),
+        help_text=_('Описание временного отрезка'),
         )
     start_time = models.TimeField(
         blank=True,

@@ -8,7 +8,7 @@ from aiogram.methods import DeleteWebhook
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
-from apps.bot.handlers import main_router, attendance_router, education_router
+from apps.bot.handlers import main_router, attendance_router, apps.progressucation_router
 
 
 locale.setlocale(
@@ -25,7 +25,7 @@ bot = Bot(
     )
 
 
-dp.include_router(education_router)
+dp.include_router(apps.progressucation_router)
 dp.include_router(attendance_router)
 dp.include_router(main_router)
 

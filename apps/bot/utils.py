@@ -12,7 +12,7 @@ from apps.account.models import StudentGroup
 
 from apps.education.models import Lesson, Attendance, Task
 
-from apps.attendance.models import StudentAttendance, StudentTask
+from apps.progress.models import StudentAttendance, StudentTask
 
 
 ################################################################################################################

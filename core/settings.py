@@ -16,7 +16,7 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=str, default="*").split(", ")
 MY_APPS = [
     'apps.account',
     'apps.classroom',
-    'apps.attendance',
+    'apps.progress',
     'apps.education',
     'apps.bot'
 ]

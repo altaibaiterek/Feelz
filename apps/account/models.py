@@ -12,44 +12,25 @@ from apps.classroom.models import ClassRoom, ClassSchedule, ClassTime
 class Student(Base):
     first_name = models.CharField(
         max_length=255, 
-        blank=True,
-        null=True,
         verbose_name=_("Имя"),
         help_text=_('Имя студента')
         )
     last_name = models.CharField(
         max_length=255, 
-        blank=True,
-        null=True,
         verbose_name=_("Фамилия"),
         help_text=_('Фамилия студента')
         )
-    phone = PhoneNumberField(
-        blank=True,
-        null=True,
+    phone_number = PhoneNumberField(
+        unique=True,
         verbose_name=_("Телефон"),
-        help_text=_("Номер телефона студента (Например: +996555333222).")
-        )
-    telegram_username = models.CharField(
-        blank=True,
-        null=True,
-        max_length=255,
-        verbose_name=_("Псевдоним в Телеграм"),
-        help_text=_("Псевдоним студента в Телеграм.")
-        )
-    telegram_id = models.CharField(
-        blank=True,
-        null=True,
-        max_length=32,
-        verbose_name=_("Телеграм идентификатор"),
-        help_text=_("Уникальный идентификатор студента в Телеграм.")
+        help_text=_("Номер телефона студента (Например: +996777111222).")
         )
     
     def __str__(self) -> str:
-        return f'{self.first_name} {self.last_name} {self.phone}'
+        return f'{self.first_name} {self.last_name} {self.phone_number}'
     
     class Meta:
-        ordering = ['last_name']
+        ordering = ['last_name', 'phone_number']
         verbose_name = _('Студент')
         verbose_name_plural = _('Студенты')
     
@@ -57,8 +38,7 @@ class Student(Base):
 class StudentGroup(Base):
     name = models.CharField(
         max_length=255,
-        blank=True,
-        null=True,
+        unique=True,
         verbose_name=_('Название'),
         help_text=_('Название группы'),
         )
@@ -88,8 +68,8 @@ class StudentGroup(Base):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        verbose_name=_('Расписание (дни недели)'),
-        help_text=_('Расписание группы в днях недели'),
+        verbose_name=_('Расписание'),
+        help_text=_('Расписание группы'),
     )
     class_time = models.ForeignKey(
         ClassTime,
@@ -97,13 +77,13 @@ class StudentGroup(Base):
         blank=True,
         null=True,
         verbose_name=_('Время занятий'),
-        help_text=_('Время занятий группы, проч'),
+        help_text=_('Время занятий группы'),
     )
     
     def __str__(self) -> str:
-        return f'{self.name}'
+        return f'{self.name} {self.classroom if self.classroom else ""}'
     
     class Meta:
         ordering = ['name']
-        verbose_name = _('Группа студентов')
-        verbose_name_plural = _('Группы студентов')
+        verbose_name = _('Группа')
+        verbose_name_plural = _('Группы')

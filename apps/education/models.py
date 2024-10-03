@@ -17,8 +17,7 @@ class Lesson(Base):
         help_text=_('Группа студентов, которая проводит занятие')
     )
     topic = models.CharField(
-        blank=True,
-        null=True,
+        unique=True,
         max_length=255,
         verbose_name=_('Тема'),
         help_text=_('Тема занятия')
@@ -49,8 +48,7 @@ class Task(Base):
         help_text=_('Занятие, к которому относится задание')
     )
     body = models.TextField(
-        blank=True,
-        null=True,
+        unique=True,
         verbose_name=_('Задание'),
         help_text=_('Описание задания')
     )
