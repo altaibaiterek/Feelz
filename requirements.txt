@@ -12,10 +12,13 @@ Django==4.2
 django-jazzmin==3.0.0
 django-phonenumber-field==8.0.0
 frozenlist==1.4.1
+gunicorn==23.0.0
 idna==3.10
 magic-filter==1.0.12
 multidict==6.1.0
+packaging==24.1
 phonenumberslite==8.13.45
+psycopg2-binary==2.9.9
 pydantic==2.9.2
 pydantic_core==2.23.4
 python-decouple==3.8
