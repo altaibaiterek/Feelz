@@ -148,7 +148,22 @@ def get_student_data_by_task(student_task):
 
 
 @sync_to_async
+def get_task_data_by_student_task(student_task):
+    return student_task.task.to_dict_data()
+
+
+@sync_to_async
 def get_lesson_data_by_task(task_id):
     task = Task.objects.get(id=task_id)
     lesson = task.lesson
     return {'topic': lesson.topic, 'body': lesson.body, 'task_body': task.body}
+
+
+@sync_to_async
+def get_lesson_data_by_attendance(attendance):
+    return attendance.lesson.to_dict_data()
+
+
+@sync_to_async
+def get_attendance_data_by_student_attendance(student_attendance):
+    return student_attendance.attendance.to_dict_data()

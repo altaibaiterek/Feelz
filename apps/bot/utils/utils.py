@@ -62,6 +62,7 @@ async def send_students_tasks(
 async def send_lesson_attendance(
     update_type: CallbackQuery,
     students_attendance: list,
+    attendance_id,
     students_attendance_keyboard
 ) -> None:
 
@@ -73,7 +74,7 @@ async def send_lesson_attendance(
 
         await update_type.message.answer(
             text=student_text,
-            reply_markup=await students_attendance_keyboard(student_attendance)
+            reply_markup=await students_attendance_keyboard(student_attendance, attendance_id)
         )
 
 
@@ -89,37 +90,45 @@ async def get_date_info():
 
 
 async def extract_student_late_info(message):
-    pattern = r"🕒 Укажите, на сколько минут опоздал студент:\s*\*?\s*([A-Za-zА-Яа-яёЁ]+)\s+([A-Za-zА-Яа-яёЁ]+)\s+\(\+(\d{12})\)"
-    match = re.search(pattern, message)
+    lines = message.split('\n')
 
-    if match:
-        first_name = match.group(1)
-        last_name = match.group(2)
-        phone = match.group(3)
-        return {
-            "first_name": first_name,
-            "last_name": last_name,
-            "phone": '+' + phone
-        }
-    
-    return None
+    lesson_info = lines[0]
+    attendance_id = lesson_info.split('№')[1].split(':')[0].strip()
+
+    student_info = lines[-1].strip()
+    student_data = student_info.split()
+
+    first_name = student_data[0]
+    last_name = student_data[1]
+    phone_number = student_data[2].strip('()')
+
+    return {
+        "first_name": first_name,
+        "last_name": last_name,
+        "phone_number": phone_number,
+        "attendance_id": attendance_id
+    }
 
 
 async def extract_student_mark_info(message):
-    pattern = r"📝 Укажите, сколько баллов получил студент за задание:\s*\*?\s*([A-Za-zА-Яа-яёЁ]+)\s+([A-Za-zА-Яа-яёЁ]+)\s*\(\+(\d{12})\)"
-    match = re.search(pattern, message)
+    lines = message.split('\n')
 
-    if match:
-        first_name = match.group(1)
-        last_name = match.group(2)
-        phone = match.group(3)
-        return {
-            "first_name": first_name,
-            "last_name": last_name,
-            "phone": '+' + phone
-        }
-    
-    return None
+    task_info = lines[0]
+    task_id = task_info.split('№')[1].split(':')[0].strip()
+
+    student_info = lines[-1].strip()
+    student_data = student_info.split()
+
+    first_name = student_data[0]
+    last_name = student_data[1]
+    phone_number = student_data[2].strip('()')
+
+    return {
+        "first_name": first_name,
+        "last_name": last_name,
+        "phone_number": phone_number,
+        "task_id": task_id
+    }
 
 
 def escape_markdown(text: str) -> str:
