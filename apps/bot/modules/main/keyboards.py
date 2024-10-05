@@ -37,12 +37,11 @@ async def get_student_groups_list() -> InlineKeyboardMarkup:
 
 
 async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
-
     lessons = await get_group_lessons(student_group_id)
 
     lessons_list_buttons = [
         InlineKeyboardButton(
-            text=f"{lesson.topic}",
+            text=f"{lesson.topic} [{lesson.created_at.strftime('%d.%m')}]",
             callback_data=f"lesson_{lesson.id}"
         )
         for lesson in lessons
@@ -50,42 +49,25 @@ async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
 
     total_lessons = len(lessons_list_buttons)
 
-    if total_lessons == 0:
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text="Добавить занятие",
-                        callback_data=f'add_lesson_to_group_{student_group_id}'
-                    ),
-                    InlineKeyboardButton
-                    (
-                        text="🔙 Назад",
-                        callback_data='back_to_menu'
-                    )
-                ]
-            ]
+    lesson_rows = []
+    if total_lessons > 0:
+        optimal_columns = math.ceil(math.sqrt(total_lessons))
+        
+        for i in range(0, total_lessons, optimal_columns):
+            lesson_rows.append(lessons_list_buttons[i: i + optimal_columns])
+
+    lesson_rows.append([
+        InlineKeyboardButton(
+            text="Добавить занятие",
+            callback_data=f'add_lesson_to_group_{student_group_id}'
         )
-
-    optimal_columns = math.ceil(math.sqrt(total_lessons))
-
-    lesson_rows = [
-        lessons_list_buttons[i: i + optimal_columns]
-        for i in range(0, total_lessons, optimal_columns)
-    ]
-
-    lesson_rows.append(
-        [
-            InlineKeyboardButton(
-                text="Добавить занятие",
-                callback_data=f'add_lesson_to_group_{student_group_id}'
-            ),
-            InlineKeyboardButton(
-                text="🔙 Назад",
-                callback_data='back_to_menu'
-            )
-        ]
-    )
+    ])
+    lesson_rows.append([
+        InlineKeyboardButton(
+            text="🔙 Назад",
+            callback_data='back_to_menu'
+        )
+    ])
 
     return InlineKeyboardMarkup(inline_keyboard=lesson_rows)
 

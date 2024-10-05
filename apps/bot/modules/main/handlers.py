@@ -93,5 +93,5 @@ async def back_to_menu_view(
 ) -> None:
 
     await main_view(callback.message)
-    await callback.answer('🔙 Возвращаемся в главное меню, пожалуйста, подождите...')
+    await callback.answer('🔙 Возвращаемся...')
     
