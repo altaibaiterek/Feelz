@@ -121,3 +121,6 @@ async def extract_student_mark_info(message):
     
     return None
 
+
+def escape_markdown(text: str) -> str:
+    return re.sub(r'([_*[\]()~`>#+=|{}.!-])', r'\\\1', text)

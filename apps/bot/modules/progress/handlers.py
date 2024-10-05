@@ -6,7 +6,7 @@ from apps.account.models import Student
 
 from apps.bot.modules.progress.keyboards import get_student_attendance_menu, get_student_task_menu
 from apps.bot.utils.orm_queries import get_attendance_info_by_id, get_lesson_data_by_task, get_student_data_by_attendance, get_student_data_by_task, get_students_attendance_by_lesson_attendance, get_students_tasks_by_lesson_task, get_task_info_by_id
-from apps.bot.utils.utils import extract_student_late_info, extract_student_mark_info, send_lesson_attendance, send_students_tasks
+from apps.bot.utils.utils import escape_markdown, extract_student_late_info, extract_student_mark_info, send_lesson_attendance, send_students_tasks
 from apps.progress.models import StudentAttendance, StudentTask
 
 
@@ -23,7 +23,7 @@ async def input_student_info_status(
     student_data = await extract_student_late_info(previous_message)
     
     if student_data is not None:
-        student = await Student.objects.aget(phone=student_data['phone'])
+        student = await Student.objects.aget(phone_number=student_data['phone'])
         student_attendance = await StudentAttendance.objects.aget(student=student)
 
         student_attendance.late = input_value
@@ -44,7 +44,7 @@ async def input_student_info_status(
     else:
         student_data = await extract_student_mark_info(previous_message)
         if student_data is not None:
-            student = await Student.objects.aget(phone=student_data['phone'])
+            student = await Student.objects.aget(phone_number=student_data['phone'])
             student_task = await StudentTask.objects.aget(student=student)
 
             student_task.mark = input_value
@@ -80,8 +80,8 @@ async def task_view(
     task = await get_task_info_by_id(task_id)
 
     lesson_data = await get_lesson_data_by_task(task_id)
-    task_lesson_name = lesson_data['topic']
-    task_body = task.body
+    task_lesson_name = escape_markdown(lesson_data['topic'])
+    task_body = escape_markdown(task.body)
 
     callback_answer_text = task_lesson_name
     answer_text = f"""
@@ -105,6 +105,7 @@ async def task_view(
     )
 
 
+
 @progress_router.callback_query(F.data.startswith("student_task_passed_status_"))
 async def update_student_task_passed_status(
     callback: CallbackQuery,
@@ -116,10 +117,12 @@ async def update_student_task_passed_status(
     student_task.passed = not student_task.passed
 
     if student_task.passed:
-        await callback.answer("❌ Студент не сдал задание.")
+        # await callback.answer("❌ Студент не сдал задание.")
+        await callback.answer("✅ Студент сдал задание.")
         student_task.passed = True
     else:
-        await callback.answer("✅ Студент сдал задание.")
+        # await callback.answer("✅ Студент сдал задание.")
+        await callback.answer("❌ Студент не сдал задание.")
         student_task.passed = False
 
     await student_task.asave()
@@ -142,7 +145,7 @@ async def update_student_task_mark_status(
     student_data = await get_student_data_by_task(student_task)
 
     student_name = (student_data['first_name'] + ' ' + student_data['last_name']).upper()
-    student_phone = student_data['phone']
+    student_phone = student_data['phone_number']
 
     menu_text = f"""
 📝 *Укажите, сколько баллов получил студент за задание:*
@@ -190,10 +193,12 @@ async def update_student_attendance_skipped_status(
     student_attendance.skipped = not student_attendance.skipped
 
     if student_attendance.skipped:
-        await callback.answer("❌ Студент не был на занятии.")
+        # await callback.answer("❌ Студент не был на занятии.")
+        await callback.answer("✅ Студент присутствовал на занятии.")
         student_attendance.skipped = True
     else:
-        await callback.answer("✅ Студент присутствовал на занятии.")
+        # await callback.answer("✅ Студент присутствовал на занятии.")
+        await callback.answer("❌ Студент не был на занятии.")
         student_attendance.skipped = False
 
     await student_attendance.asave()
@@ -216,7 +221,7 @@ async def update_student_attendance_late_status(
     student_data = await get_student_data_by_attendance(student_attendance)
 
     student_name = (student_data['first_name'] + ' ' + student_data['last_name']).upper()
-    student_phone = student_data['phone']
+    student_phone = student_data['phone_number']
 
     menu_text = f"""
 🕒 *Укажите, на сколько минут опоздал студент:*

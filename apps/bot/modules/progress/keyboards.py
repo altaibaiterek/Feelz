@@ -10,7 +10,8 @@ async def get_student_attendance_menu(
     keyboard = InlineKeyboardBuilder()
     student_attendance_id = student_attendance.id
 
-    skipped = '❌ Не был' if student_attendance.skipped else '✅ Был'
+    # skipped = '❌ Не был' if student_attendance.skipped else '✅ Был'
+    skipped = '❌ Не был' if not student_attendance.skipped else '✅ Был'
     late = '❌ Не опоздал' if student_attendance.late <= 0 else f'⚠️ Опоздал на {student_attendance.late} минут'
 
     keyboard.add(
@@ -37,7 +38,8 @@ async def get_student_task_menu(
     keyboard = InlineKeyboardBuilder()
     student_task_id = student_task.id
 
-    passed = '❌ Не сдал' if student_task.passed else '✅ Сдал'
+    # passed = '❌ Не сдал' if student_task.passed else '✅ Сдал'
+    passed = '❌ Не сдал' if not student_task.passed else '✅ Сдал'
     mark = '❌ Не принято' if student_task.mark <= 0 else f'✅ {student_task.mark} баллов'
 
     keyboard.add(

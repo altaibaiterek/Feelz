@@ -54,6 +54,10 @@ async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(
             inline_keyboard=[
                 [
+                    InlineKeyboardButton(
+                        text="Добавить занятие",
+                        callback_data=f'add_lesson_to_group_{student_group_id}'
+                    ),
                     InlineKeyboardButton
                     (
                         text="🔙 Назад",
@@ -72,6 +76,10 @@ async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
 
     lesson_rows.append(
         [
+            InlineKeyboardButton(
+                text="Добавить занятие",
+                callback_data=f'add_lesson_to_group_{student_group_id}'
+            ),
             InlineKeyboardButton(
                 text="🔙 Назад",
                 callback_data='back_to_menu'
