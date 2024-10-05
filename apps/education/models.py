@@ -12,12 +12,10 @@ class Lesson(Base):
         StudentGroup,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
         verbose_name=_('Группа'),
-        help_text=_('Группа студентов, которая проводит занятие')
+        help_text=_('Группа, которая проводит занятие')
     )
     topic = models.CharField(
-        unique=True,
         max_length=255,
         verbose_name=_('Тема'),
         help_text=_('Тема занятия')
@@ -43,12 +41,10 @@ class Task(Base):
         Lesson,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
         verbose_name=_('Занятие'),
         help_text=_('Занятие, к которому относится задание')
     )
     body = models.TextField(
-        unique=True,
         verbose_name=_('Задание'),
         help_text=_('Описание задания')
     )
@@ -57,7 +53,7 @@ class Task(Base):
         return f'{self.lesson}: {self.body}'
 
     class Meta:
-        ordering = ['lesson']
+        ordering = ['lesson', 'body']
         verbose_name = _('Задание')
         verbose_name_plural = _('Задания')
 
@@ -67,7 +63,6 @@ class Attendance(Base):
         Lesson,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
         verbose_name=_('Занятие'),
         help_text=_('Занятие, для которого фиксируется посещаемость')
     )
@@ -75,15 +70,14 @@ class Attendance(Base):
         StudentGroup,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
-        verbose_name=_('Группа студентов'),
-        help_text=_('Группа студентов, чья посещаемость фиксируется')
+        verbose_name=_('Группа'),
+        help_text=_('Группа, чья посещаемость фиксируется')
     )
 
     def __str__(self):
         return f'{self.lesson} - {self.student_group}'
 
     class Meta:
-        ordering = ['lesson', 'student_group']
-        verbose_name = _('Посещаемость')
-        verbose_name_plural = _('Посещаемости')
+        ordering = ['student_group', 'lesson']
+        verbose_name = _('Отчёт посещаемости')
+        verbose_name_plural = _('Отчёты посещаемости')

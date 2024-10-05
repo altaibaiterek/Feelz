@@ -2,13 +2,13 @@ import locale
 import logging
 
 from decouple import config
-from aiogram import Bot, Dispatcher
+from aiogram import Bot
 
 from aiogram.methods import DeleteWebhook
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
-from apps.bot.handlers import main_router, attendance_router, apps.progressucation_router
+from apps.bot.modules.routers import dp
 
 
 locale.setlocale(
@@ -16,18 +16,12 @@ locale.setlocale(
 )
 
 
-dp = Dispatcher()
 bot = Bot(
         token=config("BOT_TOKEN"),
         default=DefaultBotProperties(
             parse_mode=ParseMode.MARKDOWN
         )
     )
-
-
-dp.include_router(apps.progressucation_router)
-dp.include_router(attendance_router)
-dp.include_router(main_router)
 
 
 async def start_bot() -> None:
