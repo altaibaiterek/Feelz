@@ -40,7 +40,14 @@ async def get_student_groups_list() -> InlineKeyboardMarkup:
     group_rows.append([
         InlineKeyboardButton(
             text="Добавить ученика",
-            web_app=WebAppInfo(url=WEB_URL)
+            web_app=WebAppInfo(url=WEB_URL + 'admin/account/')
+        )
+    ])
+
+    group_rows.append([
+        InlineKeyboardButton(
+            text="Добавить ученика URL",
+            url=f'{WEB_URL}admin/account/'
         )
     ])
 
@@ -56,7 +63,7 @@ async def get_group_lessons_list(student_group_id) -> InlineKeyboardMarkup:
             callback_data=f"lesson_{lesson.id}"
         )
         for lesson in lessons
-    ]
+    ][:6]
 
     total_lessons = len(lessons_list_buttons)
 

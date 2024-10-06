@@ -131,5 +131,7 @@ CSP_FRAME_ANCESTORS = ("'self'", "127.0.0.1", "localhost")
 CSP_DEFAULT_SRC = ("'self'", "127.0.0.1", "localhost")
 
 
-CSRF_TRUSTED_ORIGINS = [WEB_URL]
+# CSRF_TRUSTED_ORIGINS = ['https://mutual-select-mastiff.ngrok-free.app/']
+CSRF_TRUSTED_ORIGINS = ['https://*', 'http://*']
 TIME_INPUT_FORMATS = ['%H:%M']
+# CSRF_COOKIE_SECURE=False
