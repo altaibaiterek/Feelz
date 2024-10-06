@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from apps.bot.admin import BaseAdmin
 
+from apps.education.inlines import AttendanceInline, StudentAttendanceInline, StudentTaskInline, TaskInline
+
 from .models import Lesson, Task, Attendance
 
 
@@ -12,6 +14,7 @@ class LessonAdmin(BaseAdmin):
     search_fields = ('topic', 'body', 'student_group__name')
     ordering = ('student_group', 'topic')
     fields = ('topic', 'student_group', 'body')
+    inlines = [TaskInline, AttendanceInline]
     list_per_page = 20
 
 
@@ -22,6 +25,7 @@ class TaskAdmin(BaseAdmin):
     list_filter = ('lesson',)
     ordering = ('lesson',)
     fields = ('lesson', 'body')
+    inlines = [StudentTaskInline]
     list_per_page = 20
 
 
@@ -32,4 +36,5 @@ class AttendanceAdmin(BaseAdmin):
     list_filter = ('lesson', 'student_group')
     ordering = ('lesson', 'student_group')
     fields = ('lesson', 'student_group')
+    inlines = [StudentAttendanceInline]
     list_per_page = 20

@@ -23,3 +23,4 @@ class StudentGroupAdmin(BaseAdmin):
     ordering = ('name',)
     fields = ('name', 'description', 'classroom', 'class_schedule', 'class_time', 'students')
     list_per_page = 20
+    filter_horizontal = ('students',)

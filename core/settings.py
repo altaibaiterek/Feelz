@@ -74,34 +74,23 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 
-# if DOCKER_STARTUP:
-#     DATABASES = {
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+# DATABASES = {
 #         "default": {
 #             "ENGINE": "django.db.backends.postgresql",
 #             "NAME": config("POSTGRES_DB", cast=str),
 #             "USER": config("POSTGRES_USER", cast=str),
 #             "PASSWORD": config("POSTGRES_PASSWORD", cast=str),
 #             "HOST": config("POSTGRES_HOST", cast=str),
-#             "PORT": config("POSTGRES_PORT", cast=int),
+#             "PORT": config("POSTGRES_PORT"),
 #         }
 #     }
-# else:
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.sqlite3",
-#             "NAME": BASE_DIR / "db.sqlite3",
-#         }
-#     }
-DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("POSTGRES_DB", cast=str),
-            "USER": config("POSTGRES_USER", cast=str),
-            "PASSWORD": config("POSTGRES_PASSWORD", cast=str),
-            "HOST": config("POSTGRES_HOST", cast=str),
-            "PORT": config("POSTGRES_PORT"),
-        }
-    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -143,3 +132,4 @@ CSP_DEFAULT_SRC = ("'self'", "127.0.0.1", "localhost")
 
 
 CSRF_TRUSTED_ORIGINS = [WEB_URL]
+TIME_INPUT_FORMATS = ['%H:%M']

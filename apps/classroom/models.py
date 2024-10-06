@@ -85,7 +85,8 @@ class ClassSchedule(Base):
         )
     
     def __str__(self):
-        return f'{self.name} ({self.days})'
+        days = ", ".join([str(day) for day in self.days.all()])
+        return f'{self.name} ({days})'
     
     class Meta:
         ordering = ['name']

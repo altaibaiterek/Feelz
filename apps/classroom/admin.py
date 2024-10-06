@@ -2,15 +2,7 @@ from django.contrib import admin
 
 from apps.bot.admin import BaseAdmin
 
-from .models import DayOfWeek, ClassRoom, ClassSchedule, ClassTime
-
-
-@admin.register(DayOfWeek)
-class DayOfWeekAdmin(BaseAdmin):
-    list_display = ('id', '__str__')
-    ordering = ('id',)
-    search_fields = ('id',)
-    list_filter = ('id',)
+from .models import ClassRoom, ClassSchedule, ClassTime
 
 
 @admin.register(ClassRoom)

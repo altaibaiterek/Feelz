@@ -7,3 +7,6 @@ class ClassroomConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.classroom"
     verbose_name = _('Организация расписания')
+
+    def ready(self):
+        import apps.classroom.signals
