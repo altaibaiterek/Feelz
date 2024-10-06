@@ -10,6 +10,8 @@ from apps.education.models import Task
 
 from aiogram.types import WebAppInfo
 
+from core.settings import WEB_URL
+
 
 async def get_student_groups_list() -> InlineKeyboardMarkup:
     
@@ -37,8 +39,8 @@ async def get_student_groups_list() -> InlineKeyboardMarkup:
 
     group_rows.append([
         InlineKeyboardButton(
-            text="тест",
-            web_app=WebAppInfo(url='https://mutual-select-mastiff.ngrok-free.app/admin/login/?next=/admin/')
+            text="Добавить ученика",
+            web_app=WebAppInfo(url=WEB_URL)
         )
     ])
 

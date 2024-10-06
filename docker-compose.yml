@@ -22,6 +22,20 @@ services:
     restart: always
 
 
+  bot:
+    build: .
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py runbot"
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - db
+    restart: always
+
+
   db:
     image: postgres:latest
     restart: always
@@ -29,11 +43,15 @@ services:
       - .env
 
 
-  bot:
-    build: .
-    command: python manage.py runbot
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
     depends_on:
-      - db
+      - web
     restart: always
 
 

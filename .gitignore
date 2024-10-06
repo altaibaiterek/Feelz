@@ -555,3 +555,8 @@ $RECYCLE.BIN/
 
 # Но не игнорируем __init__.py
 !**/migrations/__init__.py
+
+
+static/
+staticfiles/
+media/

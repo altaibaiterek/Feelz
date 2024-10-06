@@ -12,7 +12,9 @@ SECRET_KEY = config("SECRET_KEY", cast=str, default="naruto_uzumaki")
 DEBUG = config("DEBUG", cast=bool, default=True)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=str, default="*").split(", ")
+
 DOCKER_STARTUP = config("DOCKER_STARTUP", cast=bool, default=False)
+WEB_URL = config('WEB_URL', cast=str)
 
 
 MY_APPS = [
@@ -125,7 +127,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "media/"
@@ -138,3 +140,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 X_FRAME_OPTIONS = "SAMEORIGIN"
 CSP_FRAME_ANCESTORS = ("'self'", "127.0.0.1", "localhost")
 CSP_DEFAULT_SRC = ("'self'", "127.0.0.1", "localhost")
+
+
+CSRF_TRUSTED_ORIGINS = [WEB_URL]
