@@ -68,18 +68,11 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "core.wsgi.application"
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
-if DOCKER_STARTUP:
-    DATABASES = {
+POSTGRES_DATABASE = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": config("POSTGRES_DB"),
@@ -89,13 +82,19 @@ if DOCKER_STARTUP:
             "PORT": config("POSTGRES_PORT"),
         }
     }
-else:
-    DATABASES = {
+
+SQLITE_DATABASE = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+
+if DOCKER_STARTUP:
+    DATABASES = POSTGRES_DATABASE
+else:
+    DATABASES = SQLITE_DATABASE
 
 
 AUTH_PASSWORD_VALIDATORS = [

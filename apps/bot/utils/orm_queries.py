@@ -165,5 +165,11 @@ def get_lesson_data_by_attendance(attendance):
 
 
 @sync_to_async
+def get_lesson_id_by_task(task):
+    lesson = task.lesson.to_dict_data()
+    return lesson['id']
+
+
+@sync_to_async
 def get_attendance_data_by_student_attendance(student_attendance):
     return student_attendance.attendance.to_dict_data()

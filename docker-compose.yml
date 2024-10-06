@@ -8,8 +8,8 @@ services:
       sh -c "python manage.py makemigrations --noinput &&
              python manage.py migrate --noinput &&
              python manage.py collectstatic --noinput &&
-             gunicorn --bind 0.0.0.0:8000 core.wsgi:application &&
              python manage.py runbot
+             gunicorn --bind 0.0.0.0:8000 core.wsgi:application &&
              "
     volumes:
       - .:/app
@@ -23,6 +23,8 @@ services:
   db:
     image: postgres
     restart: always
+    ports:
+      - "5432:5432"
     env_file:
       - .env
 

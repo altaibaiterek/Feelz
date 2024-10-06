@@ -4,8 +4,8 @@ from aiogram.types import CallbackQuery, Message
 
 from apps.account.models import Student
 
-from apps.bot.modules.progress.keyboards import get_student_attendance_menu, get_student_task_menu
-from apps.bot.utils.orm_queries import get_attendance_data_by_student_attendance, get_attendance_info_by_id, get_lesson_data_by_attendance, get_lesson_data_by_task, get_student_data_by_attendance, get_student_data_by_task, get_students_attendance_by_lesson_attendance, get_students_tasks_by_lesson_task, get_task_data_by_student_task, get_task_info_by_id
+from apps.bot.modules.progress.keyboards import get_student_attendance_menu, get_student_task_menu, return_lesson_menu
+from apps.bot.utils.orm_queries import get_attendance_data_by_student_attendance, get_attendance_info_by_id, get_lesson_data_by_attendance, get_lesson_data_by_task, get_lesson_id_by_task, get_student_data_by_attendance, get_student_data_by_task, get_students_attendance_by_lesson_attendance, get_students_tasks_by_lesson_task, get_task_data_by_student_task, get_task_info_by_id
 from apps.bot.utils.utils import escape_markdown, extract_student_late_info, extract_student_mark_info, send_lesson_attendance, send_students_tasks
 from apps.education.models import Attendance, Task
 from apps.progress.models import StudentAttendance, StudentTask
@@ -31,6 +31,8 @@ async def input_student_info_status(
         student_attendance.late = input_value
         await student_attendance.asave()
 
+        lesson_data = await get_lesson_data_by_attendance(attendance)
+
         await message.answer(
             f"""
 🎉 *Опоздание в «{input_value}» минут успешно занесено в журнал!*
@@ -41,7 +43,8 @@ async def input_student_info_status(
 📞 *Телефон:* {student_data['phone_number']}
 
 📘 *Спасибо за внимательность!*
-            """
+            """,
+            reply_markup=await return_lesson_menu(lesson_data['id'])
         )
     except Exception as e:
         student_data = await extract_student_mark_info(previous_message)
@@ -51,6 +54,8 @@ async def input_student_info_status(
 
         student_task.mark = input_value
         await student_task.asave()
+
+        lesson_id = await get_lesson_id_by_task(task)
 
         await message.answer(
             f"""
@@ -62,7 +67,8 @@ async def input_student_info_status(
 📞 *Телефон:* {student_data['phone_number']}
 
 📘 *Благодарим за вашу работу!*
-            """
+            """,
+            reply_markup=await return_lesson_menu(lesson_id)
         )
 
 
@@ -117,11 +123,9 @@ async def update_student_task_passed_status(
     student_task.passed = not student_task.passed
 
     if student_task.passed:
-        # await callback.answer("❌ Студент не сдал задание.")
         await callback.answer("✅ Студент сдал задание.")
         student_task.passed = True
     else:
-        # await callback.answer("✅ Студент сдал задание.")
         await callback.answer("❌ Студент не сдал задание.")
         student_task.passed = False
 
@@ -196,11 +200,9 @@ async def update_student_attendance_skipped_status(
     student_attendance.skipped = not student_attendance.skipped
 
     if student_attendance.skipped:
-        # await callback.answer("❌ Студент не был на занятии.")
         await callback.answer("✅ Студент присутствовал на занятии.")
         student_attendance.skipped = True
     else:
-        # await callback.answer("✅ Студент присутствовал на занятии.")
         await callback.answer("❌ Студент не был на занятии.")
         student_attendance.skipped = False
 
