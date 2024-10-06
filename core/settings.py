@@ -44,6 +44,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    'apps.bot.middleware.DisableCsrfForAdmin',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -130,8 +131,4 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 CSP_FRAME_ANCESTORS = ("'self'", "127.0.0.1", "localhost")
 CSP_DEFAULT_SRC = ("'self'", "127.0.0.1", "localhost")
 
-
-# CSRF_TRUSTED_ORIGINS = ['https://mutual-select-mastiff.ngrok-free.app/']
-CSRF_TRUSTED_ORIGINS = ['https://*', 'http://*']
 TIME_INPUT_FORMATS = ['%H:%M']
-# CSRF_COOKIE_SECURE=False

@@ -40,7 +40,7 @@ async def get_student_groups_list() -> InlineKeyboardMarkup:
     group_rows.append([
         InlineKeyboardButton(
             text="Добавить ученика",
-            web_app=WebAppInfo(url=WEB_URL + 'admin/account/')
+            web_app=WebAppInfo(url=WEB_URL + 'admin/account/studentgroup/')
         )
     ])
 
