@@ -8,6 +8,8 @@ from apps.bot.utils.orm_queries import get_group_lessons, get_or_create_attendan
 
 from apps.education.models import Task
 
+from aiogram.types import WebAppInfo
+
 
 async def get_student_groups_list() -> InlineKeyboardMarkup:
     
@@ -32,6 +34,13 @@ async def get_student_groups_list() -> InlineKeyboardMarkup:
         group_buttons[i: i + optimal_columns]
         for i in range(0, total_groups, optimal_columns)
     ]
+
+    group_rows.append([
+        InlineKeyboardButton(
+            text="тест",
+            web_app=WebAppInfo(url='https://mutual-select-mastiff.ngrok-free.app/admin/login/?next=/admin/')
+        )
+    ])
 
     return InlineKeyboardMarkup(inline_keyboard=group_rows)
 

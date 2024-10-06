@@ -72,29 +72,34 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 
-POSTGRES_DATABASE = {
+# if DOCKER_STARTUP:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": config("POSTGRES_DB", cast=str),
+#             "USER": config("POSTGRES_USER", cast=str),
+#             "PASSWORD": config("POSTGRES_PASSWORD", cast=str),
+#             "HOST": config("POSTGRES_HOST", cast=str),
+#             "PORT": config("POSTGRES_PORT", cast=int),
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("POSTGRES_DB"),
-            "USER": config("POSTGRES_USER"),
-            "PASSWORD": config("POSTGRES_PASSWORD"),
-            "HOST": config("POSTGRES_HOST"),
+            "NAME": config("POSTGRES_DB", cast=str),
+            "USER": config("POSTGRES_USER", cast=str),
+            "PASSWORD": config("POSTGRES_PASSWORD", cast=str),
+            "HOST": config("POSTGRES_HOST", cast=str),
             "PORT": config("POSTGRES_PORT"),
         }
     }
-
-SQLITE_DATABASE = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-
-
-if DOCKER_STARTUP:
-    DATABASES = POSTGRES_DATABASE
-else:
-    DATABASES = SQLITE_DATABASE
 
 
 AUTH_PASSWORD_VALIDATORS = [

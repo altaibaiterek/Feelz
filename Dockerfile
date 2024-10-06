@@ -1,4 +1,4 @@
-FROM python:3.9.6
+FROM python:3
 
 ENV PYTHONUNBUFFERED=1
 ENV TZ=Asia/Bishkek

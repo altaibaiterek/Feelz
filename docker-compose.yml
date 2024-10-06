@@ -1,16 +1,16 @@
-version: '3'
+version: '3.8'
+
 
 services:
 
-  bot:
+
+  web:
     build: .
     command: >
       sh -c "python manage.py makemigrations --noinput &&
              python manage.py migrate --noinput &&
              python manage.py collectstatic --noinput &&
-             python manage.py runbot
-             gunicorn --bind 0.0.0.0:8000 core.wsgi:application &&
-             "
+             gunicorn core.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
       - static_volume:/app/static
@@ -19,14 +19,22 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    restart: always
+
 
   db:
-    image: postgres
+    image: postgres:latest
     restart: always
-    ports:
-      - "5432:5432"
     env_file:
       - .env
+
+
+  bot:
+    build: .
+    command: python manage.py runbot
+    depends_on:
+      - db
+    restart: always
 
 
 volumes:
