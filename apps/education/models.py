@@ -28,7 +28,7 @@ class Lesson(Base):
     )
 
     def __str__(self):
-        return f'{self.topic} - {self.student_group}'
+        return f'{self.topic}'
 
     class Meta:
         ordering = ['student_group']
@@ -45,7 +45,7 @@ class Task(Base):
         help_text=_('Занятие, к которому относится задание')
     )
     body = models.TextField(
-        verbose_name=_('Задание'),
+        verbose_name=_('Описание'),
         help_text=_('Описание задания')
     )
 
@@ -75,7 +75,7 @@ class Attendance(Base):
     )
 
     def __str__(self):
-        return f'{self.lesson} - {self.student_group}'
+        return f'{self.lesson} [{self.student_group}]'
 
     class Meta:
         ordering = ['student_group', 'lesson']

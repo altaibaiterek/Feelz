@@ -81,7 +81,7 @@ class StudentGroup(Base):
     )
     
     def __str__(self) -> str:
-        return f'{self.name} {self.classroom if self.classroom else ""}'
+        return f'{self.name}'
     
     class Meta:
         ordering = ['name']

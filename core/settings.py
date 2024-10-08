@@ -44,7 +44,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    'apps.bot.middleware.DisableCsrfForAdmin',
+    'apps.bot.middlewares.DisableCsrfForAdmin', # off csrf check
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -130,5 +130,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 X_FRAME_OPTIONS = "SAMEORIGIN"
 CSP_FRAME_ANCESTORS = ("'self'", "127.0.0.1", "localhost")
 CSP_DEFAULT_SRC = ("'self'", "127.0.0.1", "localhost")
+
 
 TIME_INPUT_FORMATS = ['%H:%M']

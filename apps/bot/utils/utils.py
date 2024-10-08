@@ -133,3 +133,10 @@ async def extract_student_mark_info(message):
 
 def escape_markdown(text: str) -> str:
     return re.sub(r'([_*[\]()~`>#+=|{}.!-])', r'\\\1', text)
+
+
+def ensure_text_length(text: str) -> str:
+    if not text or text.isspace():
+        return "Ничего нет"
+
+    return text[:4096]
